@@ -20,6 +20,7 @@ class SampleListener(Leap.Listener):
 
         print "Frame id: %d, timestamp: %d, hands: %d, fingers: %d" % (frame.id, frame.timestamp, len(frame.hands), len(frame.fingers))
 
+        print(frame.serialize)
 if __name__ == "__main__":
     listener = SampleListener()
     controller = Leap.Controller()
