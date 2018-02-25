@@ -1,5 +1,5 @@
 #!/usr/bin/python2
-import os, sys, inspect, thread, time
+import os, sys, inspect, thread, time,socket
 src_dir = os.path.dirname(inspect.getfile(inspect.currentframe()))
 # Windows and Linux
 arch_dir = '../lib/x64' if sys.maxsize > 2**32 else '../lib/x86'
@@ -11,6 +11,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(src_dir, arch_dir)))
 import Leap
 
 class SampleListener(Leap.Listener):
+    def set_socket(self, sock):
+        self.sock = sock
+
     def on_connect(self, controller):
         print "ohai"
 
@@ -22,7 +25,18 @@ class SampleListener(Leap.Listener):
 
         print(frame.serialize)
 if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: %s IP PORT" % sys.argv[0])
+        sys.exit(-1)
+
+    ip = sys.argv[1]
+    port = int(sys.argv[2]) 
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((ip, port))
+
     listener = SampleListener()
+    listener.set_socket(sock)
     controller = Leap.Controller()
 
     controller.add_listener(listener)
