@@ -2,6 +2,16 @@
 
 import socket
 import sys
+import struct
+
+import os, inspect, thread, time, ctypes
+src_dir = os.path.dirname(inspect.getfile(inspect.currentframe()))
+
+arch_dir = '../lib/x64' if sys.maxsize > 2**32 else '../lib/x86'
+
+sys.path.insert(0, os.path.abspath(os.path.join(src_dir, arch_dir)))
+
+import Leap
 
 BUFFER_SIZE = 1024
 
@@ -21,6 +31,9 @@ if __name__ == "__main__":
     conn, addr = sock.accept()
     while True:
         data = conn.recv(BUFFER_SIZE)
+        frame = Leap.Frame()
+        frame.deserialize(data, len(data))
+        print(int(data.decode("utf-8")))
         if not data:
             break
         print("Got data: %s" % data)
